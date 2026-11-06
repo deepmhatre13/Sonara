@@ -60,6 +60,11 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/2"
 
+    # Object Storage Backend ('local' or 's3')
+    STORAGE_BACKEND: str = "local"
+    LOCAL_STORAGE_PATH: str = r"D:\Sonara\data\objects"
+    MODEL_CACHE_DIR: str = r"D:\Sonara\data\models"
+
     # Object Storage (S3 / MinIO)
     S3_ENDPOINT_URL: str = "http://localhost:9000"
     S3_ACCESS_KEY: str = "minioadmin"

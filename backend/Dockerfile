@@ -7,20 +7,21 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# Install system dependencies (ffmpeg for audio inspection/transcoding, libpq for PostgreSQL)
+# Install system dependencies (ffmpeg for media processing, libpq for PostgreSQL, curl for healthchecks)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ffmpeg \
     libpq5 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install build dependencies, build wheels, and purge build tools
-COPY pyproject.toml .
-RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
-    && pip install --upgrade pip \
-    && pip install -e ".[dev]" \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy dependency specifications first for optimal Docker layer caching
+COPY pyproject.toml requirements.txt ./
+
+# Configure pip timeout and retry limits for reliable downloads on slow or fluctuating network connections
+RUN pip install --upgrade pip \
+    && pip install --default-timeout=120 --retries=10 -e ".[dev]" \
     && apt-get purge -y --auto-remove build-essential libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,4 +35,3 @@ USER sonarauser
 EXPOSE 8000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-

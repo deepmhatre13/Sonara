@@ -102,7 +102,7 @@ def probe_audio(file_path: str, timeout_seconds: int = 15) -> AudioMetadata:
             raise
         except Exception as sf_err:
             logger.warning(f"soundfile probe fallback failed: {sf_err}")
-            raise RuntimeError(f"Audio probe failed (no ffprobe and soundfile error: {sf_err})")
+            raise RuntimeError(f"Audio probe failed (no ffprobe and soundfile error: {sf_err})") from sf_err
 
 
     cmd = [
@@ -242,7 +242,7 @@ def normalize_audio(
             )
         except Exception as norm_err:
             logger.warning(f"soundfile normalization fallback failed: {norm_err}")
-            raise RuntimeError(f"Audio normalization failed (no ffmpeg and soundfile error: {norm_err})")
+            raise RuntimeError(f"Audio normalization failed (no ffmpeg and soundfile error: {norm_err})") from norm_err
 
 
     # Safe subprocess execution with strict audio filters
